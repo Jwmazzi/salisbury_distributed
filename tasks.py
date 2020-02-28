@@ -91,6 +91,8 @@ def batch_process_articles(article_list):
 @app.task
 def process_csv(csv_key):
 
+    print(f'Processing Key: {csv_key}')
+
     # Define S3 Connection
     s3 = boto3.resource('s3')
 
