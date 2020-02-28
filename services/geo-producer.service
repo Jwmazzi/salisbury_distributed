@@ -1,0 +1,5 @@
+[Unit]
+Description=Celery Producer for GeoAnalytics Processing
+
+[Service]
+ExecStart=/opt/miniconda3/envs/worker/bin/python /opt/geoanalytics/tasks.py

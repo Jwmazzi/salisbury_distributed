@@ -12,14 +12,19 @@ import boto3
 import time
 import json
 import re
+import os
 
 
 import warnings
 warnings.filterwarnings("ignore")
 
 
+# Define Local Script Location
+this_dir = os.path.split(os.path.realpath(__file__))[0]
+
+
 # Read Local Configuration & Define Application
-cfg = json.loads(open('config.json').read())
+cfg = json.loads(open(os.path.join(this_dir, 'config.json')).read())
 app = Celery('tasks', backend='rpc://', broker=f'amqp://{cfg["username"]}:{cfg["password"]}@{cfg["rabbitmq"]}')
 
 
@@ -28,7 +33,7 @@ def open_connection(func):
     @wraps(func)
     def wrap(*args, **kwargs):
 
-        con = sqlite3.connect('gdelt.db')
+        con = sqlite3.connect(os.path.join(this_dir, 'gdelt.db'))
         cur = con.cursor()
 
         args = list(args)
