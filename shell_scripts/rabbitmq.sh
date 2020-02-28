@@ -4,7 +4,7 @@ wget https://github.com/rabbitmq/erlang-rpm/releases/download/v22.2.6/erlang-22.
 yum install /opt/erlang-22.2.6-1.el6.x86_64.rpm -y
 
 wget https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.8.2/rabbitmq-server-3.8.2-1.el7.noarch.rpm -P /opt
-yum install rabbitmq-server-3.8.2-1.el7.noarch.rpm -y
+yum install /opt/rabbitmq-server-3.8.2-1.el7.noarch.rpm -y
 
 chkconfig rabbitmq-server on
 
