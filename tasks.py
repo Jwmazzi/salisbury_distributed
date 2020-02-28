@@ -93,6 +93,8 @@ def process_csv(csv_key):
 
     print(f'Processing Key: {csv_key}')
 
+    process_start = time.time()
+
     # Define S3 Connection
     s3 = boto3.resource('s3')
 
@@ -122,7 +124,7 @@ def process_csv(csv_key):
     dump_df.to_csv(df_buff, index=False)
     s3.Object('gdelt-geoanalytics', csv_key).put(Body=df_buff.getvalue())
 
-    return csv_key
+    return csv_key, round((time.time() - process_start) / 60, 2)
 
 
 @open_connection
@@ -163,7 +165,8 @@ if __name__ == "__main__":
 
         for idx, result in enumerate(results):
             if result.ready():
-                insert_result(db_table, result.get(), time.time())
+                key_name, run_time = result.get()
+                insert_result(db_table, key_name, run_time)
                 del results[idx]
 
             print(f'Pending Jobs: {len(results)}')
