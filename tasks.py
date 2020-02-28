@@ -119,7 +119,7 @@ def process_csv(csv_key):
 
     # Push Data Back to S3
     df_buff = StringIO()
-    dump_df.to_csv(df_buff)
+    dump_df.to_csv(df_buff, index=False)
     s3.Object('gdelt-geoanalytics', csv_key).put(Body=df_buff.getvalue())
 
     return csv_key
