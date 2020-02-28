@@ -23,3 +23,8 @@ Both the producer and consumer roles can be built with the following steps.
 
 The only difference between the producer and consumer environments is how they will be daemonized in systemd. Go to the
 services directory in /opt/geoanalytics and use the following steps to configure the appropriate service. 
+
+* cp /opt/geoanalytics/services/geo-consumer.service /etc/systemd/system
+* systemctl daemon-reload
+* service geo-consumer start
+* service geo-consumer status
