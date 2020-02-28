@@ -1,9 +1,6 @@
 [Unit]
 Description=Celery Consumer for GeoAnalytics Processing
 
-#[Service]
-#ExecStart=/opt/miniconda3/envs/worker/bin/python /opt/geoanalytics/tasks.py
-
 [Service]
 WorkingDirectory=/opt/geoanalytics
 ExecStart=/opt/miniconda3/envs/worker/bin/python -m celery -A tasks worker -P threads --concurrency=1 --loglevel=info
