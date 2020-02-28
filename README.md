@@ -1,8 +1,8 @@
 # Overview
 
 This repository contains a number of files to support a lecture around distributed data processing with Python using
-Celery and RabbitMQ. Before getting started on the processing piece, you will need to build the data set that is used
-in the system detailed below.
+Celery and RabbitMQ. Before getting started on the processing piece, you will need to build the data set that is 
+processed and explored below.
 
 # Collecting the Sample Data (RHEL Linux Not Required for This Section)
 
@@ -17,7 +17,7 @@ Follow the steps below to extract GDELT data for 2018 and get it uploaded into S
 
 There are 3 components in our distributed processing system: a producer that sends work to a queue, a messaging broker
 that will manage communication with the queue, and consumers that will take work from the queue. This particular lecture
-assumes that everything will be done on CentOS 7, but everything should work on RHEL and (with a few obvious correction) 
+assumes that everything will be done on CentOS 7, but everything should work on RHEL and (with a few corrections to the bash scripts) 
 maybe also on other Linux distributions.
 
 # Installing RabbitMQ
