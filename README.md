@@ -1,7 +1,24 @@
+# Overview
+
+This repository contains a number of files to support a lecture around distributed data processing with Python using
+Celery and RabbitMQ. Before getting started on the processing piece, you will need to build the data set that is used
+in the system detailed below.
+
+# Collecting the Sample Data (RHEL Linux Not Required for This Section)
+
+Follow the steps below to extract GDELT data for 2018 and get it uploaded into S3. 
+
+* Install Git on your machine and then clone this repository into your working directory. 
+* TODO - Provide YML File for Windows  & Linux to Build Environment
+* Run extraction.py
+* Use awscli to push to s3 (e.g. aws s3 cp gdelt_events s3://bucket-name --recursive)
+
 # Getting Started on the Processing Components
 
 There are 3 components in our distributed processing system: a producer that sends work to a queue, a messaging broker
-that will manage that queue, and consumers that will take work from the queue. 
+that will manage communication with the queue, and consumers that will take work from the queue. This particular lecture
+assumes that everything will be done on CentOS 7, but everything should work on RHEL and (with a few obvious correction) 
+maybe also on other Linux distributions.
 
 # Installing RabbitMQ
 
