@@ -119,12 +119,16 @@ def process_csv(csv_key):
     dump_df = dump_df[[c for c in dump_df.columns if not c.endswith('_x')]]
     dump_df.columns = dump_df.columns.str.replace('_y', '')
 
-    # Push Data Back to S3
-    df_buff = StringIO()
-    dump_df.to_csv(df_buff, index=False)
-    s3.Object('gdelt-geoanalytics', csv_key).put(Body=df_buff.getvalue())
+    # Push GDELT CSV Back to S3
+    out_buff = StringIO()
+    dump_df.to_csv(out_buff, index=False)
+    s3.Object('gdelt-geoanalytics', csv_key).put(Body=out_buff.getvalue())
 
-    return csv_key, round((time.time() - process_start) / 60, 2)
+    # Create Accounting Note - E.G. 2018010.csv_122.txt
+    run_time = int((time.time() - process_start) // 60)
+    s3.Object('gdelt-geoanalytics', f'completed/{csv_key.split("/")[1]}_{run_time}.txt').put(Body=b' ')
+
+    return csv_key
 
 
 @open_connection
@@ -157,16 +161,6 @@ if __name__ == "__main__":
     bucket = boto3.resource('s3').Bucket('gdelt-geoanalytics')
     keys   = [obj.key for obj in bucket.objects.all() if obj.key.endswith('csv')]
 
-    # Create Tasks on Queue and Store Async Results
-    results = [process_csv.delay(key) for key in keys]
-
-    # Wait for All Results to Return From Queue & Write to SQLite
-    while len(results) > 1:
-
-        for idx, result in enumerate(results):
-            if result.ready():
-                key_name, run_time = result.get()
-                insert_result(db_table, key_name, run_time)
-                del results[idx]
-
-            print(f'Pending Jobs: {len(results)}')
+    # Push Keys to the Queue
+    for key in keys:
+        process_csv.delay(key)
