@@ -87,7 +87,7 @@ def process_csv(csv_key):
 
     # Merge Article Data to Original Data Frame
     proc_df = pandas.DataFrame(list(chain(*data)), columns=['SOURCEURL', 'TITLE', 'SITE', 'SUMMARY', 'KEYWORDS', 'META'])
-    dump_df = base_df.merge(proc_df, on='SOURCEURL')
+    dump_df = base_df.merge(proc_df, how='left', on='SOURCEURL')
 
     # Remove Empty Placeholder Attributes & Remove Suffix From Newly Merged Attributes
     dump_df = dump_df[[c for c in dump_df.columns if not c.endswith('_x')]]
