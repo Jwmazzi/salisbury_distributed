@@ -2,11 +2,8 @@ from multiprocessing import Pool, cpu_count
 from urllib.parse import urlparse
 from newspaper import Article
 from itertools import chain
-from functools import wraps
 from celery import Celery
 from io import StringIO
-import traceback
-import sqlite3
 import pandas
 import boto3
 import time
@@ -22,32 +19,9 @@ warnings.filterwarnings("ignore")
 # Define Local Script Location
 this_dir = os.path.split(os.path.realpath(__file__))[0]
 
-
 # Read Local Configuration & Define Application
 cfg = json.loads(open(os.path.join(this_dir, 'config.json')).read())
-app = Celery('tasks', backend='rpc://', broker=f'amqp://{cfg["username"]}:{cfg["password"]}@{cfg["rabbitmq"]}')
-
-
-def open_connection(func):
-
-    @wraps(func)
-    def wrap(*args, **kwargs):
-
-        con = sqlite3.connect(os.path.join(this_dir, 'gdelt.db'))
-        cur = con.cursor()
-
-        args = list(args)
-        args.insert(0, cur)
-
-        try:
-            func(*args, **kwargs)
-        except:
-            print(traceback.format_exc())
-        finally:
-            con.commit()
-            con.close()
-
-    return wrap
+app = Celery('tasks', broker=f'amqp://{cfg["username"]}:{cfg["password"]}@{cfg["rabbitmq"]}')
 
 
 def batch_it(l, n):
@@ -131,36 +105,12 @@ def process_csv(csv_key):
     return csv_key
 
 
-@open_connection
-def create_tracking_table(cursor, table_name):
-
-    cursor.execute(f'''
-                    create table if not exists {table_name}
-                    (key_name text, key_time text)
-                    ''')
-
-
-@open_connection
-def insert_result(cursor, table_name, key_name, key_time):
-
-    cursor.execute(f'''
-                    insert into {table_name}
-                    values ('{key_name}', '{key_time}')
-                    ''')
-
-
 if __name__ == "__main__":
 
-    # SQLite Table Name - E.G. run_1582309726
-    db_table = f'{cfg["db_table"]}_{int(time.time())}'
-
-    # Build Base Table for Storing Results
-    create_tracking_table(db_table)
-
-    # Connect to S3 Bucket
+    # Connect to S3 Bucket & Fetch All CSV Keys
     bucket = boto3.resource('s3').Bucket('gdelt-geoanalytics')
     keys   = [obj.key for obj in bucket.objects.all() if obj.key.endswith('csv')]
 
-    # Push Keys to the Queue
+    # Push CSV Keys to the Queue
     for key in keys:
         process_csv.delay(key)
