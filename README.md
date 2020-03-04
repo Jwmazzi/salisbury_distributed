@@ -27,7 +27,7 @@ maybe also on other Linux distributions.
 Execute the following steps on your CentOS machine to get RabbitMQ running as our broker. 
 * yum install -y git
 * git clone https://github.com/Jwmazzi/salisbury_distributed.git /opt/geoanalytics
-* chmod +x /opt/geoanalytics/rabbitmq.sh
+* chmod +x /opt/geoanalytics/scripts/rabbitmq.sh
 * /opt/geoanalytics/scripts/rabbitmq.sh
 
 After you have completed these steps, the management interface to RabbitMQ should be available at 
@@ -39,12 +39,13 @@ Both the producer and consumer roles can be built with the following steps.
 
 * yum install -y git
 * git clone https://github.com/Jwmazzi/salisbury_distributed.git /opt/geoanalytics
-* chmod +x /opt/geoanalytics/python.sh
+* chmod +x /opt/geoanalytics/scripts/python.sh
 * /opt/geoanalytics/scripts/python.sh
 
 The only difference between the producer and consumer environments is how they will be daemonized via systemd. Go to the
 services directory in /opt/geoanalytics and use the following steps to configure the appropriate service. 
 
+* source /opt/miniconda3/bin/activate worker
 * aws configure
   * Input Access Keys for S3 Bucket
 * cp /opt/geoanalytics/services/geo-consumer.service /etc/systemd/system
