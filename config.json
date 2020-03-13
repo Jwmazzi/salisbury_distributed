@@ -1,6 +1,6 @@
 {
   "username": "siteadmin",
   "password": "gis12345",
-  "rabbitmq": "ps0007066.esri.com",
+  "rabbitmq": "ps0007193.esri.com",
   "db_table": "run"
 }
